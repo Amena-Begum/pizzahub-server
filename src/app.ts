@@ -4,6 +4,7 @@ import express, { type RequestHandler } from "express";
 import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
+import { menuRouter } from "./routes/menu.routes.js";
 
 const withDatabase: RequestHandler = async (_req, _res, next) => {
   await connectDB();
@@ -39,6 +40,8 @@ export function createApp() {
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
   app.use("/api", withDatabase);
+
+  app.use("/api/menu", menuRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
