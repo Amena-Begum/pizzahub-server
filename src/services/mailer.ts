@@ -3,6 +3,13 @@ import { env } from "../config/env.js";
 
 let transporter: Transporter | null | undefined;
 
+// Seeded demo accounts use made-up addresses on a domain we do not own, so we never email them
+const DEMO_DOMAINS = (process.env.DEMO_EMAIL_DOMAINS ?? "pizzahub.app")
+  .split(",")
+  .map((d) => d.trim().toLowerCase())
+  .filter(Boolean);
+export const isDemoAddress = (email: string) => DEMO_DOMAINS.some((d) => email.toLowerCase().endsWith(`@${d}`));
+
 function getTransporter() {
   if (transporter !== undefined) return transporter;
   const smtp = env.smtp();
@@ -33,7 +40,7 @@ interface OrderMail {
  */
 export async function sendOrderStatusEmail(mail: OrderMail) {
   const t = getTransporter();
-  if (!t) return false;
+  if (!t || isDemoAddress(mail.to)) return false;
   const accepted = mail.status === "accepted";
   const accent = accepted ? "#1f8a4c" : "#c2341b";
   const link = `${env.clientUrls()[0]}/dashboard/customer/orders/${mail.orderId}`;
