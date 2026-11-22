@@ -1,4 +1,4 @@
-import { createApp } from "./app.js";
+import { createApp } from "./create-app.js";
 
 // Vercel entry point: the default export is the Express app. Local development uses src/local.ts.
 const app = createApp();
