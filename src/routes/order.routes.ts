@@ -13,6 +13,15 @@ orderRouter.use(verifyJWT);
 
 const MAX_DAYS_AHEAD = 30;
 
+/** The last n calendar months as YYYY-MM, oldest first, so charts show empty months too. */
+function lastMonths(n: number) {
+  const now = new Date();
+  return Array.from({ length: n }, (_, i) => {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (n - 1 - i), 1));
+    return d.toISOString().slice(0, 7);
+  });
+}
+
 /**
  * POST /api/orders — customer, vendor and item come from the token and the database, never from
  * the request body (only itemId is accepted, and the item decides the vendor and price).
@@ -121,7 +130,10 @@ orderRouter.get("/overview", verifyCustomer, async (req, res) => {
         favorites: favoritesCount?.favorites?.length ?? 0,
       },
       byStatus: counts,
-      monthly: monthly.map((m) => ({ month: m._id, orders: m.orders, spent: Math.round(m.spent * 100) / 100 })),
+      monthly: lastMonths(6).map((month) => {
+        const m = monthly.find((x) => x._id === month);
+        return { month, orders: m?.orders ?? 0, spent: Math.round((m?.spent ?? 0) * 100) / 100 };
+      }),
       recent,
     },
   });
