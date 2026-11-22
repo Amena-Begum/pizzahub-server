@@ -5,8 +5,10 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import { menuRouter } from "./routes/menu.routes.js";
+import { adminRouter } from "./routes/admin.routes.js";
 import { customerRouter } from "./routes/customer.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
+import { userRouter } from "./routes/user.routes.js";
 import { vendorRouter } from "./routes/vendor.routes.js";
 
 const withDatabase: RequestHandler = async (_req, _res, next) => {
@@ -48,6 +50,8 @@ export function createApp() {
   app.use("/api/vendor", vendorRouter);
   app.use("/api/orders", orderRouter);
   app.use("/api/customer", customerRouter);
+  app.use("/api/admin", adminRouter);
+  app.use("/api/users", userRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
