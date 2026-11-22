@@ -5,6 +5,7 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import { menuRouter } from "./routes/menu.routes.js";
+import { vendorRouter } from "./routes/vendor.routes.js";
 
 const withDatabase: RequestHandler = async (_req, _res, next) => {
   await connectDB();
@@ -42,6 +43,7 @@ export function createApp() {
   app.use("/api", withDatabase);
 
   app.use("/api/menu", menuRouter);
+  app.use("/api/vendor", vendorRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
