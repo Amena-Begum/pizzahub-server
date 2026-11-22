@@ -8,6 +8,7 @@ import { menuRouter } from "./routes/menu.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { customerRouter } from "./routes/customer.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
+import { paymentRouter, stripeWebhook } from "./routes/payment.routes.js";
 import { userRouter } from "./routes/user.routes.js";
 import { vendorRouter } from "./routes/vendor.routes.js";
 
@@ -42,6 +43,9 @@ export function createApp() {
     res.json({ success: true, status: "ok", time: new Date().toISOString() });
   });
 
+  // Raw body for signature verification, so this must come before express.json()
+  app.post("/api/payments/webhook", ...stripeWebhook);
+
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
   app.use("/api", withDatabase);
@@ -52,6 +56,7 @@ export function createApp() {
   app.use("/api/customer", customerRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/users", userRouter);
+  app.use("/api/payments", paymentRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
