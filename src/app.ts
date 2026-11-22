@@ -6,6 +6,7 @@ import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import { menuRouter } from "./routes/menu.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
+import { contactRouter } from "./routes/contact.routes.js";
 import { customerRouter } from "./routes/customer.routes.js";
 import { orderRouter } from "./routes/order.routes.js";
 import { paymentRouter, stripeWebhook } from "./routes/payment.routes.js";
@@ -57,6 +58,7 @@ export function createApp() {
   app.use("/api/admin", adminRouter);
   app.use("/api/users", userRouter);
   app.use("/api/payments", paymentRouter);
+  app.use("/api/contact", contactRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

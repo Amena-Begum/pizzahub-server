@@ -68,3 +68,26 @@ export async function sendOrderStatusEmail(mail: OrderMail) {
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
+
+interface ContactMail {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+/** Forwards a contact form message to the PizzaHub inbox. Reply-To is the sender. */
+export async function sendContactEmail(mail: ContactMail) {
+  const t = getTransporter();
+  const to = process.env.SUPPORT_EMAIL || env.smtp().from;
+  if (!t || !to) return false;
+  await t.sendMail({
+    from: `PizzaHub Contact <${env.smtp().from}>`,
+    to,
+    replyTo: `${mail.name} <${mail.email}>`,
+    subject: `[PizzaHub contact] ${mail.subject}`,
+    text: `From: ${mail.name} <${mail.email}>\n\n${mail.message}`,
+    html: `<div style="font-family:Arial,sans-serif;line-height:1.6"><p><strong>From:</strong> ${escapeHtml(mail.name)} &lt;${escapeHtml(mail.email)}&gt;</p><p><strong>Subject:</strong> ${escapeHtml(mail.subject)}</p><p style="white-space:pre-wrap">${escapeHtml(mail.message)}</p></div>`,
+  });
+  return true;
+}
