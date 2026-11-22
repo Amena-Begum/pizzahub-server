@@ -4,7 +4,7 @@ import { env } from "../config/env.js";
 let transporter: Transporter | null | undefined;
 
 // Seeded demo accounts use made-up addresses on a domain we do not own, so we never email them
-const DEMO_DOMAINS = (process.env.DEMO_EMAIL_DOMAINS ?? "pizzahub.app")
+const DEMO_DOMAINS = (process.env.DEMO_EMAIL_DOMAINS ?? "pizzahub.app,example.com")
   .split(",")
   .map((d) => d.trim().toLowerCase())
   .filter(Boolean);
